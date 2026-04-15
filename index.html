@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FKF IT 2026</title>
+  <title>Tour Guide</title>
 
   <!-- PWA / Icon -->
   <link rel="manifest" href="manifest.json">
@@ -108,12 +108,11 @@ async function loadCSV() {
 }
 
 function parseCSV(text) {
-  const lines = text.trim().split('
-');
-  const headers = lines[0].split(',');
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(';');
 
   return lines.slice(1).map(line => {
-    const values = line.split(',');
+    const values = line.split(';');
     let obj = {};
     headers.forEach((h, i) => obj[h.trim()] = values[i] ? values[i].trim() : '');
     return obj;
@@ -176,6 +175,60 @@ function updateUI(row) {
     createButton('Park Webseite', row.Park_Web),
     createButton('Park Map', row.Park_Map_P),
     createButton('Google Maps', row.Park_Maps_G)
+  ]);
+
+  renderRow('rowSocial', [
+    createButton('Facebook', row.FB),
+    createButton('X', row.X),
+    createButton('Instagram', row.Insta)
+  ]);
+
+  renderRow('rowCount', [
+    createButton('Coaster Count', row.Ccount_Link),
+    createButton('Coaster Cloud', row.CoasterCloud_Link),
+    createButton('RCDB', row.RCDB_Link)
+  ]);
+
+  const weatherLink = getWeather(row, new Date());
+  renderRow('rowWeather', [
+    createButton('Wetter', weatherLink),
+    createButton('Radar', row.Wetter_Radar)
+  ]);
+
+  renderRow('rowHotel', [
+    createButton('Hotel', row.Hotel_Web),
+    createButton('Umgebung', row.Hotel_Maps)
+  ]);
+}
+
+function initDropdown(data) {
+  const dropdown = document.getElementById('parkDropdown');
+  dropdown.innerHTML = '';
+
+  const today = formatDate(new Date());
+  let selectedIndex = 0;
+
+  data.forEach((row, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.text = row.Park_Drop_Down;
+    dropdown.appendChild(option);
+
+    if (row.Datum === today) selectedIndex = index;
+  });
+
+  dropdown.selectedIndex = selectedIndex;
+  updateUI(data[selectedIndex]);
+
+  dropdown.addEventListener('change', (e) => {
+    updateUI(data[e.target.value]);
+  });
+}
+
+// Init
+loadCSV().then(data => {
+  initDropdown(data);
+});
 </script>
 
 </body>
