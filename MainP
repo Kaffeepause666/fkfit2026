@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tour Guide</title>
+
+  <!-- PWA / Icon -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="theme-color" content="#000000">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      text-align: center;
+    }
+
+    .container {
+      padding: 10px;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    select {
+      width: 90%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      flex: 1;
+      min-width: 30%;
+      padding: 12px;
+      background: rgba(0,0,0,0.7);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Head -->
+  <h1 id="headText">Tourtag</h1>
+
+  <!-- Dropdown -->
+  <select id="parkDropdown"></select>
+
+  <!-- Park Main -->
+  <div id="rowParkMain" class="row"></div>
+
+  <!-- Social -->
+  <div id="rowSocial" class="row"></div>
+
+  <!-- Count -->
+  <div id="rowCount" class="row"></div>
+
+  <!-- Wetter -->
+  <div id="rowWeather" class="row"></div>
+
+  <!-- Hotel -->
+  <div id="rowHotel" class="row"></div>
+
+  <!-- Impressum -->
+  <div class="row">
+    <a class="btn" href="#">Tour Guide</a>
+    <a class="btn" href="#">Impressum</a>
+  </div>
+
+</div>
+
+<script>
+// Platzhalter – Logik kommt später
+console.log("HTML geladen");
+</script>
+
+</body>
+</html>
