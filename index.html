@@ -101,8 +101,81 @@
 </div>
 
 <script>
-// Platzhalter – Logik kommt später
-console.log("HTML geladen");
+async function loadCSV() {
+  const response = await fetch('data.csv');
+  const text = await response.text();
+  return parseCSV(text);
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('
+');
+  const headers = lines[0].split(',');
+
+  return lines.slice(1).map(line => {
+    const values = line.split(',');
+    let obj = {};
+    headers.forEach((h, i) => obj[h.trim()] = values[i] ? values[i].trim() : '');
+    return obj;
+  });
+}
+
+function formatDate(date) {
+  return date.toISOString().split('T')[0];
+}
+
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return formatDate(d);
+}
+
+function getWeather(row, today) {
+  const d0 = formatDate(today);
+  const d1 = addDays(today, 1);
+  const d2 = addDays(today, 2);
+  const d3 = addDays(today, 3);
+
+  if (row.Datum === d0) return row.Wetter_H;
+  if (row.Datum === d1) return row.Wetter_M;
+  if (row.Datum === d2 || row.Datum === d3) return row.Wetter_3;
+  return row.Wetter_7;
+}
+
+function createButton(label, link) {
+  if (!link) return null;
+  const a = document.createElement('a');
+  a.className = 'btn';
+  a.href = link;
+  a.target = '_blank';
+  a.innerText = label;
+  return a;
+}
+
+function renderRow(containerId, buttons) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  const valid = buttons.filter(b => b !== null);
+  if (valid.length === 0) {
+    container.classList.add('hidden');
+    return;
+  }
+
+  container.classList.remove('hidden');
+  valid.forEach(btn => container.appendChild(btn));
+}
+
+function updateUI(row) {
+  // Head
+  document.getElementById('headText').innerText =
+    `Tourtag ${row.Tourtag} - ${row.Wochentag}, ${row.Datum}`;
+
+  // Reihen
+  renderRow('rowParkMain', [
+    createButton('Park Webseite', row.Park_Web),
+    createButton('Park Map', row.Park_Map_P),
+    createButton('Google Maps', row.Park_Maps_G)
 </script>
 
 </body>
