@@ -108,8 +108,7 @@ async function loadCSV() {
 }
 
 function parseCSV(text) {
-  const lines = text.trim().split('
-');
+  const lines = text.trim().split('\n');
   const headers = lines[0].split(';');
 
   return lines.slice(1).map(line => {
