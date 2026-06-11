@@ -102,6 +102,13 @@
 
 <script>
 let currentTourtag = "";
+let tourStartDate = "";
+  
+const sortedData = [...data].sort((a, b) =>
+  a.Datum.localeCompare(b.Datum)
+);
+
+const tourStartDate = sortedData[0].Datum;
   
 async function loadCSV() {
   const response = await fetch('data.csv');
@@ -176,9 +183,21 @@ function updateUI(row) {
     String(today.getMonth() + 1).padStart(2, '0') + '.' +
     today.getFullYear();
 
-document.getElementById('headText').innerText =
-    `${formattedDate}, Tourtag ${currentTourtag}`;
+  const todayString = formatDate(today);
 
+  const startDate = new Date(tourStartDate);
+
+  if (todayString < tourStartDate) {
+    const diffDays = Math.ceil(
+        (startDate - today) / (1000 * 60 * 60 * 24)
+    );
+    document.getElementById('headText').innerText =
+        `${formattedDate}, Tourstart in ${diffDays} ${diffDays === 1 ? 'Tag' : 'Tagen'}`;
+} else {
+    document.getElementById('headText').innerText =
+        `${formattedDate}, Tourtag ${currentTourtag}`;
+}
+  
   // Reihen
   renderRow('rowParkMain', [
     createButton('Park Webseite', row.Park_Web),
@@ -211,6 +230,12 @@ document.getElementById('headText').innerText =
 }
 
 function initDropdown(data) {
+  const sortedData = [...data].sort((a, b) =>
+    a.Datum.localeCompare(b.Datum)
+  );
+
+  tourStartDate = sortedData[0].Datum;
+  
   const dropdown = document.getElementById('parkDropdown');
   dropdown.innerHTML = '';
 
