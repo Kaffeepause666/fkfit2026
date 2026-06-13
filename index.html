@@ -101,8 +101,8 @@
 </div>
 
 <script>
-let currentTourtag = "";
 let tourStartDate = "";
+let tourEndDate = "";
   
 async function loadCSV() {
   const response = await fetch('data.csv');
@@ -170,27 +170,66 @@ function renderRow(containerId, buttons) {
 
 function updateUI(row) {
   // Head
-  const today = new Date();
 
-  const formattedDate =
-    String(today.getDate()).padStart(2, '0') + '.' +
-    String(today.getMonth() + 1).padStart(2, '0') + '.' +
-    today.getFullYear();
+const today = new Date();
 
-  const todayString = formatDate(today);
+const formattedDate =
+  String(today.getDate()).padStart(2, '0') + '.' +
+  String(today.getMonth() + 1).padStart(2, '0') + '.' +
+  today.getFullYear();
 
-  const startDate = new Date(tourStartDate);
+const startDate = new Date(tourStartDate);
+const endDate = new Date(tourEndDate);
 
-  if (todayString < tourStartDate) {
-    const diffDays = Math.ceil(
-        (startDate - today) / (1000 * 60 * 60 * 24)
-    );
-    document.getElementById('headText').innerText =
-        `${formattedDate}, Tourstart in ${diffDays} ${diffDays === 1 ? 'Tag' : 'Tagen'}`;
-} else {
-    document.getElementById('headText').innerText =
-        `${formattedDate}, Tourtag ${currentTourtag}`;
+const todayOnly = new Date(
+  today.getFullYear(),
+  today.getMonth(),
+  today.getDate()
+);
+
+const startOnly = new Date(
+  startDate.getFullYear(),
+  startDate.getMonth(),
+  startDate.getDate()
+);
+
+const endOnly = new Date(
+  endDate.getFullYear(),
+  endDate.getMonth(),
+  endDate.getDate()
+);
+
+let headText = '';
+
+if (todayOnly < startOnly) {
+
+  const diffDays = Math.ceil(
+    (startOnly - todayOnly) / (1000 * 60 * 60 * 24)
+  );
+
+  headText =
+    `${formattedDate}, Tourstart in ${diffDays} ${diffDays === 1 ? 'Tag' : 'Tagen'}`;
+
 }
+else if (todayOnly > endOnly) {
+
+  headText =
+    `${formattedDate}, Tour beendet`;
+
+}
+else {
+
+  const tourtag =
+    Math.floor(
+      (todayOnly - startOnly) / (1000 * 60 * 60 * 24)
+    ) + 1;
+
+  headText =
+    `${formattedDate}, Tourtag ${tourtag}`;
+
+}
+
+document.getElementById('headText').innerText = headText;
   
   // Reihen
   renderRow('rowParkMain', [
@@ -199,11 +238,10 @@ function updateUI(row) {
     createButton('Google Maps', row.Park_Maps_G)
   ]);
 
-  renderRow('rowSocial', [
-    createButton('Facebook', row.FB),
-    createButton('X', row.X),
-    createButton('Instagram', row.Insta)
-  ]);
+renderRow('rowSocial', [
+  createButton('Facebook', row.FB_Link),
+  createButton('Instagram', row.Insta_Link)
+]);
 
   renderRow('rowCount', [
     createButton('Coaster Count', row.Ccount_Link),
@@ -224,39 +262,43 @@ function updateUI(row) {
 }
 
 function initDropdown(data) {
+
   const sortedData = [...data].sort((a, b) =>
     a.Datum.localeCompare(b.Datum)
   );
 
   tourStartDate = sortedData[0].Datum;
-  
+  tourEndDate = sortedData[sortedData.length - 1].Datum;
+
   const dropdown = document.getElementById('parkDropdown');
   dropdown.innerHTML = '';
 
   const today = formatDate(new Date());
+
   let selectedIndex = 0;
 
-  const todayRow = data.find(row => row.Datum === today);
-
-  if (todayRow) {
-    currentTourtag = todayRow.Tourtag;
-  }
-
   data.forEach((row, index) => {
+
     const option = document.createElement('option');
     option.value = index;
     option.text = row.Park_Drop_Down;
+
     dropdown.appendChild(option);
 
-    if (row.Datum === today) selectedIndex = index;
+    if (row.Datum === today) {
+      selectedIndex = index;
+    }
+
   });
 
   dropdown.selectedIndex = selectedIndex;
+
   updateUI(data[selectedIndex]);
 
   dropdown.addEventListener('change', (e) => {
     updateUI(data[e.target.value]);
   });
+
 }
 
 // Init
