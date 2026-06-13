@@ -104,12 +104,6 @@
 let currentTourtag = "";
 let tourStartDate = "";
   
-const sortedData = [...data].sort((a, b) =>
-  a.Datum.localeCompare(b.Datum)
-);
-
-const tourStartDate = sortedData[0].Datum;
-  
 async function loadCSV() {
   const response = await fetch('data.csv');
   const text = await response.text();
@@ -117,7 +111,7 @@ async function loadCSV() {
 }
 
 function parseCSV(text) {
-  const lines = text.trim().split('\n');
+  const lines = text.trim().split(/\r?\n/);
   const headers = lines[0].split(';');
 
   return lines.slice(1).map(line => {
@@ -240,6 +234,7 @@ function initDropdown(data) {
   dropdown.innerHTML = '';
 
   const today = formatDate(new Date());
+  let selectedIndex = 0;
 
   const todayRow = data.find(row => row.Datum === today);
 
