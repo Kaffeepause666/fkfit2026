@@ -213,27 +213,25 @@ function initDropdown(data) {
   const dropdown = document.getElementById('parkDropdown');
   dropdown.innerHTML = '';
 
-  const today = formatDate(new Date());
+const today = formatDate(new Date());
 
-  let selectedIndex = 0;
+let selectedIndex = 0;
 
-  data.forEach((row, index) => {
+data.forEach((row, index) => {
 
     const option = document.createElement('option');
     option.value = index;
     option.text = row.Park_Drop_Down;
-
     dropdown.appendChild(option);
 
     if (row.Datum === today) {
-      selectedIndex = index;
+        selectedIndex = index;
     }
 
-  });
+});
 
-  dropdown.selectedIndex = selectedIndex;
-
-  updateUI(data[selectedIndex]);
+dropdown.selectedIndex = selectedIndex;
+updateUI(data[selectedIndex]);
 
   dropdown.addEventListener('change', (e) => {
     updateUI(data[e.target.value]);
